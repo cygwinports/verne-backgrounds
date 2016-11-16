@@ -1,0 +1,51 @@
+NAME="verne-backgrounds"
+VERSION=15.92.1
+RELEASE=1
+CATEGORY="X11"
+SUMMARY="Fedora 16 desktop wallpaper"
+DESCRIPTION="Default wallpaper for the Fedora 16 release, along with a
+collection of selected wallpapers contributed by the Fedora community."
+HOMEPAGE="https://fedoraproject.org/wiki/Design"
+SRC_URI="https://fedorahosted.org/released/design-team/${NAME}-${VERSION}.tar.xz"
+
+ARCH=noarch
+
+PKG_NAMES="${NAME} ${NAME}-extras"
+verne_backgrounds_DOCS="Attribution CC-BY-SA-3.0"
+verne_backgrounds_CONTENTS="
+	usr/share/backgrounds/verne/default/
+	usr/share/backgrounds/xfce/verne.*
+	usr/share/gnome-background-properties/desktop-backgrounds-verne.xml
+	usr/share/mate-background-properties/desktop-backgrounds-verne.xml
+	usr/share/wallpapers/Verne/
+"
+verne_backgrounds_extras_DOCS="Attribution-Extras CC-BY-SA-3.0"
+verne_backgrounds_extras_CONTENTS="
+	usr/share/backgrounds/verne/extras/
+	usr/share/backgrounds/xfce/verne-*
+	usr/share/gnome-background-properties/desktop-backgrounds-verne-extras.xml
+	usr/share/mate-background-properties/desktop-backgrounds-verne-extras.xml
+	usr/share/wallpapers/Verne_*/
+"
+
+CYGPORT_USE_UNSTABLE_API=1
+src_unpack_hook() {
+	mv 'CC-BY-SA 3.0' CC-BY-SA-3.0
+}
+
+src_compile() {
+	cd ${S}
+	cygmake
+}
+
+src_install() {
+	cd ${S}
+	cyginstall
+	mv ${D}/usr/share/{xfce4/backdrops,backgrounds/xfce}
+
+	dodir /usr/share/mate-background-properties
+	sed -e 's|gnome-wp|mate-wp|' default/desktop-backgrounds-verne.xml \
+	    > ${D}/usr/share/mate-background-properties/desktop-backgrounds-verne.xml
+	sed -e 's|gnome-wp|mate-wp|' extras/desktop-backgrounds-verne-extras.xml \
+	    > ${D}/usr/share/mate-background-properties/desktop-backgrounds-verne-extras.xml
+}
